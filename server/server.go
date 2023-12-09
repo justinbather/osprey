@@ -10,21 +10,28 @@ import (
 )
 
 type Log struct {
+	Account string `json:"account"`
 	LogType string `json:"logType"`
 	Info    string `json:"info"`
 }
 
+var logs = []Log{}
+
 func handleLog(w http.ResponseWriter, r *http.Request) {
 
+	queryParams := r.URL.Query()
+	apiKey := queryParams.Get("api_key")
 	var log Log
 	err := json.NewDecoder(r.Body).Decode(&log)
+	log.Account = apiKey
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
+	logs = append(logs, log)
 	w.WriteHeader(http.StatusCreated)
-	fmt.Println(log)
+	fmt.Println(logs)
 }
 
 func main() {
