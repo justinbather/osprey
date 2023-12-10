@@ -13,8 +13,8 @@ type Osprey struct {
 }
 
 type loggedErr struct {
-	LogType string `json:"logType"`
-	Info    string `json:"Info"`
+	ErrorType string `json:"error_type"`
+	Message   string `json:"message"`
 }
 
 func New(ApiKey string) Osprey {
@@ -24,21 +24,19 @@ func New(ApiKey string) Osprey {
 }
 
 // Prototype function to work with temporary server
-func (o *Osprey) Log(errType string, log string) {
-	fmt.Printf("Osprey found a %s, %s\n", errType, log)
+func (o *Osprey) Log(errorType string, message string) {
+	fmt.Printf("Osprey found a %s, %s\n", errorType, message)
 
-	data := loggedErr{LogType: errType, Info: log}
+	data := loggedErr{ErrorType: errorType, Message: message}
 
 	result, err := json.Marshal(data)
 	if err != nil {
-
 		panic(err)
 	}
 
 	//Temp api key so we can track errors for an account
 
 	r, err := http.NewRequest("POST", o.Url, bytes.NewBuffer(result))
-
 	if err != nil {
 		panic(err)
 	}
@@ -46,6 +44,7 @@ func (o *Osprey) Log(errType string, log string) {
 	r.Header.Add("Content-Type", "application/json")
 
 	client := &http.Client{}
+
 	res, err := client.Do(r)
 	if err != nil {
 		panic(err)
