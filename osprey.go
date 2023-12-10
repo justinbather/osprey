@@ -25,7 +25,7 @@ func New(ApiKey string) Osprey {
 
 // Prototype function to work with temporary server
 func (o *Osprey) Log(errorType string, message string) {
-	fmt.Printf("Osprey found a %s, %s\n", errorType, message)
+	fmt.Printf("Osprey found a %s error, %s\n", errorType, message)
 
 	data := loggedErr{ErrorType: errorType, Message: message}
 
@@ -33,6 +33,8 @@ func (o *Osprey) Log(errorType string, message string) {
 	if err != nil {
 		panic(err)
 	}
+
+	fmt.Println(string(result))
 
 	//Temp api key so we can track errors for an account
 
