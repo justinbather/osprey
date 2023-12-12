@@ -8,6 +8,8 @@ func main() {
 	o := osprey.New("123")
 	if 5 != 10 {
 
-		o.Log("Error test", "error message test")
+		o.Log("error message test, default")
+
+		o.Critical("critical error test")
 	}
 }

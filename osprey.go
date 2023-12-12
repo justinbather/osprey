@@ -23,20 +23,18 @@ func New(ApiKey string) Osprey {
 	return *osprey
 }
 
-// Prototype function to work with temporary server
-func (o *Osprey) Log(errorType string, message string) {
-	fmt.Printf("Osprey found a %s error, %s\n", errorType, message)
+var client http.Client
 
-	data := loggedErr{ErrorType: errorType, Message: message}
+func (o *Osprey) Log(message string) {
+
+	fmt.Printf("Osprey found a General error. Details: %s\n", message)
+
+	data := loggedErr{ErrorType: "General", Message: message}
 
 	result, err := json.Marshal(data)
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println(string(result))
-
-	//Temp api key so we can track errors for an account
 
 	r, err := http.NewRequest("POST", o.Url, bytes.NewBuffer(result))
 	if err != nil {
@@ -45,12 +43,36 @@ func (o *Osprey) Log(errorType string, message string) {
 
 	r.Header.Add("Content-Type", "application/json")
 
-	client := &http.Client{}
-
 	res, err := client.Do(r)
 	if err != nil {
 		panic(err)
 	}
 
 	defer res.Body.Close()
+}
+
+func (o *Osprey) Critical(message string) {
+	fmt.Printf("Osprey found a Critical error. Details: %s", message)
+
+	data := loggedErr{ErrorType: "Critical", Message: message}
+
+	result, err := json.Marshal(data)
+	if err != nil {
+		panic(err)
+	}
+
+	request, err := http.NewRequest("POST", o.Url, bytes.NewBuffer(result))
+	if err != nil {
+		panic(err)
+	}
+
+	request.Header.Add("Content-Type", "application/json")
+
+	res, err := client.Do(request)
+	if err != nil {
+		panic(err)
+	}
+
+	defer res.Body.Close()
+
 }
